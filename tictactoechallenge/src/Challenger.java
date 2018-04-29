@@ -19,26 +19,7 @@ public class Challenger extends Player {
 
     public String getMove(char[][] board, char you) { // DO NOT CHANGE THIS LINE
 
-        String move = "";
-        int[][] keepTrack = new int[3][3];
-        int count1 = 0;
-
-
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == '.') {
-                    count1++;
-                }
-            }
-        }
-        //Checks the above value for count. If no moves have been made yet, place first marker in the middle box.
-        //If its the computer's turn first, still attempt to place the marker in the middle box.
-//        if (count1 == 9 || count1 == 8) {
-//            move = getMoveAt(1, 1);
-//            return move;
-//        }
-
-        move = playCorners(board);
+        String move = playCorners(board);
 
 
         //Checks for 2 in a row horizontally and plays the move that makes 3 in a row
@@ -111,10 +92,6 @@ public class Challenger extends Player {
             }
         }
 
-
-
-
-
         return move;
     }
 
@@ -143,8 +120,5 @@ public class Challenger extends Player {
         }
         return move;
     }
-
-
-
 
 }
