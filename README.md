@@ -1,4 +1,4 @@
-#Problem Statement 
+# Problem Statement 
 
 Improve the getMove() function below(contained within the Challenger.java file). Return your next move.
   The board parameter is a 2D array. Each element contains either:
@@ -13,5 +13,5 @@ Improve the getMove() function below(contained within the Challenger.java file).
   If you return an invalid move, you will lose your turn.
   You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.
   
-  #Solution
+  # Solution
   
