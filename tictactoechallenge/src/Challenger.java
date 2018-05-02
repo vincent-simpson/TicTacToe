@@ -17,166 +17,299 @@ import edu.brookdale.ttt.Player;
 
 public class Challenger extends Player {
 
-	public String getMove(char[][] board, char you) {
-		String move = checkVertically(board, you);
-		if (move.isEmpty()) {
-			move = checkHorizontally(board, you);
-		} else if (move.isEmpty()) {
-			move = leftToRightDiag(board);
-		} else if (move.isEmpty()) {
-			move = rightToLeftDiag(board);
-		} else if (move.isEmpty()) {
-			move = playCorners(board);
+	protected static char YOU;
+	static int HUMAN;
+	static int COMPUTER;
+
+	public String getMove(char[][] board, char you) { // DO NOT CHANGE THIS LINE
+		String move = "";
+		int[] winners = new int[10];
+		boardCopy boardCopy1 = new boardCopy();
+
+		YOU = you;
+		if (YOU == 'x') {
+			HUMAN = 1;
+			COMPUTER = 2;
 		} else {
+			HUMAN = 2;
+			COMPUTER = 1;
+		}
+
+		// Creates a copy of the current game board
+		boardCopy1.makeCopy(board);
+
+		// Makes the first move at the center square if available
+		if (boardCopy.getValue(1, 1) == '.') {
+			return move = "MM";
+		}
+		
+		
+		winners = findWinner(board);
+		final int HUMANWIN = 0, COMPUTERWIN = 1;
+
+		if (winners[COMPUTERWIN] != -1) {
+			move = intToCell(winners[COMPUTERWIN]);
+			return move;
+		} else if (winners[HUMANWIN] != -1) {
+			move = intToCell(winners[HUMANWIN]);
+
 			return move;
 		}
 
+		final int[] corners = { 0, 6, 2, 8 };
+		String[] currentCell = new String[10];
+		for (int i = 0; i < 4; i++) {
+
+			currentCell[i] = intToCell(corners[i]);
+			if (boardCopy1.getCell(currentCell, i) == '.') {
+				move = currentCell[i];
+				return move;
+			}
+		}
+
+		for (int i = 1; i < 8; i += 2) {
+			currentCell[i] = intToCell(i);
+			if (boardCopy1.getCell(currentCell, i) == '.') {
+				move = currentCell[i];
+				return move;
+			}
+		}
+
 		return move;
+	}
+
+	//Returns an integer array which looks to see if either the Challenger has the next winning move, or if the AI does.
+	public static int[] findWinner(char[][] board) {
+		int[] winners;
+		int[] cells = new int[3];
+		int humanWin = -1, computerWin = -1;
+
+		// Test columns for win
+		for (int columns = 0; (humanWin == -1 || computerWin == -1) && columns < 3; columns++) {
+
+			for (int rows = 0; rows < 3; rows++) {
+				cells[rows] = columns * 3 + rows;
+			}
+
+			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
+			if (winners != null) {
+				if (winners[0] == HUMAN) {
+					humanWin = winners[1];
+
+				} else if (winners[0] == COMPUTER) {
+					computerWin = winners[1];
+				}
+			}
+		}
+
+		// Test rows for win
+		for (int row = 0; (humanWin == -1 || computerWin == -1) && row < 3; row++) {
+
+			for (int columns = 0; columns < 3; columns++) {
+				cells[columns] = columns * 3 + row;
+			}
+
+			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
+			if (winners != null) {
+				if (winners[0] == HUMAN) {
+					humanWin = winners[1];
+				} else if (winners[0] == COMPUTER) {
+					computerWin = winners[1];
+				}
+			}
+		}
+
+		// Checks diagonals
+		if (humanWin == -1 || computerWin == -1) {
+
+			winners = findWinsNextTurn(board, 0, 4, 8);
+
+			if (winners != null) {
+				if (winners[0] == HUMAN) {
+					humanWin = winners[1];
+				} else if (winners[0] == COMPUTER) {
+					computerWin = winners[1];
+				}
+			}
+		}
+		if (humanWin == -1 || computerWin == -1) {
+			winners = findWinsNextTurn(board, 2, 4, 6);
+
+			if (winners != null) {
+				if (winners[0] == HUMAN) {
+					humanWin = winners[1];
+				} else if (winners[0] == COMPUTER) {
+					computerWin = winners[1];
+				}
+			}
+		}
+		int[] winningMoves = { humanWin, computerWin };
+		return winningMoves;
 
 	}
 
-	private static String getMoveAt(int num1, int num2) {
+	//Returns the position on the board that results in a win.
+	public static int[] findWinsNextTurn(char[][] board, int cell1, int cell2, int cell3) {
+		final int CELL = 1;
+		final int PLAYER = 0;
+		int[] winner = new int[2];
+
+		boardCopy board1 = new boardCopy();
+		
+		if (board1.getValue(cell1) == board1.getValue(cell2) && board1.getValue(cell3) == '.') {
+			winner[PLAYER] = 1;
+			winner[CELL] = cell3;
+			return winner;
+		}
+		if (board1.getValue(cell2) == board1.getValue(cell3) && board1.getValue(cell1) == '.') {
+
+			winner[PLAYER] = 2;
+			winner[CELL] = cell1;
+			return winner;
+		}
+		if (board1.getValue(cell1) == board1.getValue(cell3) && board1.getValue(cell2) == '.') {
+
+			winner[PLAYER] = 1;
+			winner[CELL] = cell2;
+			return winner;
+		}
+		return null;
+	}
+
+	//Returns a string value corresponding to the given numerical position on the board.
+	public static String intToCell(int cellNum) {
+		int cell[] = { cellNum / 3, cellNum % 3 };
+		return getMoveAtArray(cell);
+	}
+
+	public static String getMoveAt(int num1, int num2) {
 
 		String[][] moveArray = { { "TL", "TM", "TR" }, { "ML", "MM", "MR" }, { "BL", "BM", "BR" } };
 
 		return moveArray[num1][num2];
+	}
+
+	public static String getMoveAtArray(int[] array) {
+		int num1 = array[0];
+		int num2 = array[1];
+
+		String[][] moveArray = { { "TL", "TM", "TR" }, { "ML", "MM", "MR" }, { "BL", "BM", "BR" } };
+		return moveArray[num1][num2];
 
 	}
 
-	private String playCorners(char[][] board) {
-		String move = "";
-		if (board[0][0] == '.') {
-			move = getMoveAt(0, 0);
-		} else if (board[0][2] == '.') {
-			move = getMoveAt(0, 2);
-		} else if (board[2][0] == '.') {
-			move = getMoveAt(2, 0);
-		} else if (board[2][2] == '.') {
-			move = getMoveAt(2, 2);
-		} else {
-			return move;
-		}
-		return move;
-	}
+	
+	static class boardCopy extends Challenger {
+		static char[][] boardCopy = new char[3][3];
 
-	private String checkVertically(char[][] board, char you) {
-		// Checks for 2 in a row vertically and plays the move that makes 3 in a column
-		String move = "";
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < 2; j++) {
-				if (board[j][i] == board[j + 1][i] && board[i][j] != you) {
-					if (board[2][i] == '.') {
-						move = getMoveAt(2, i);
-						return move;
-					} else if (board[0][i] == '.') {
-						move = getMoveAt(0, i);
-						return move;
-					}
-					else {
-						if(board[2][i] == '.') {
-							move = getMoveAt(2,i);
-							return move;
-						}
-						else if(board[0][i] == '.') {
-							move = getMoveAt(0,i);
-							return move;
-						}
-					}
-				}
-				for (int k = 0; k < 3; k++) {
-					if (board[0][k] == board[2][k]) {
-						if (board[1][k] == '.') {
-							move = getMoveAt(1, k);
-							return move;
-						}
-					}
-				}
-
-			}
+		public boardCopy() {
+			char[][] boardCopy = new char[3][3];
 		}
 
-		return move;
-	}
+		//Given a position on the board as a string, converts it to its corresponding numerical position
+		public char getCell(String[] currentCell, int i) {
+			int num1 = 0;
+			int num2 = 0;
 
-	private String checkHorizontally(char[][] board, char you) {
-		String move = "";
-		// Checks for 2 in a row horizontally and plays the move that makes 3 in a row
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < 2; j++) {
-				if (board[i][j] == board[i][j + 1] && board[i][j] != you) {
-					if (board[i][2] == '.') {
-						move = getMoveAt(i, 2);
-						return move;
-					} else if (board[i][0] == '.') {
-						move = getMoveAt(i, 0);
-						return move;
-					} 
-
-				}else if(board[i][2] == '.') {
-					move = getMoveAt(i ,2);
-					return move;
-				} else if(board[i][0] == '.') {
-					move = getMoveAt(i, 0);
-					return move;
-				}
+			switch (currentCell[i]) {
+			case "TL":
+				num1 = 0;
+				num2 = 0;
+				break;
+			case "TM":
+				num1 = 0;
+				num2 = 1;
+				break;
+			case "TR":
+				num1 = 0;
+				num2 = 2;
+				break;
+			case "ML":
+				num1 = 1;
+				num2 = 0;
+				break;
+			case "MM":
+				num1 = 1;
+				num2 = 1;
+				break;
+			case "MR":
+				num1 = 1;
+				num2 = 2;
+				break;
+			case "BL":
+				num1 = 2;
+				num2 = 0;
+				break;
+			case "BM":
+				num1 = 2;
+				num2 = 1;
+				break;
+			case "BR":
+				num1 = 2;
+				num2 = 2;
+				break;
 			}
-			if (board[i][0] == board[i][2]) {
-				if (board[i][1] == '.') {
-					move = getMoveAt(i, 1);
-					return move;
-				}
 
+			return boardCopy[num1][num2];
+
+		}
+
+		
+		public String getCell(int currentCell, int currentCell2) {
+
+			return Character.toString(boardCopy[currentCell][currentCell2]);
+		}
+
+		public static char getValue(int row, int column) {
+			return boardCopy[row][column];
+		}
+
+		//Given a numerical position on the board (0-8 starting from the top left and going left to right), returns the character at that position.
+		public char getValue(int row) {
+			char c = 0;
+
+			switch (row) {
+			case 0:
+				c = boardCopy[0][0];
+				break;
+			case 1:
+				c = boardCopy[0][1];
+				break;
+			case 2:
+				c = boardCopy[0][2];
+				break;
+			case 3:
+				c = boardCopy[1][0];
+				break;
+			case 4:
+				c = boardCopy[1][1];
+				break;
+			case 5:
+				c = boardCopy[1][2];
+				break;
+			case 6:
+				c = boardCopy[2][0];
+				break;
+			case 7:
+				c = boardCopy[2][1];
+				break;
+			case 8:
+				c = boardCopy[2][2];
+				break;
+			}
+
+			return c;
+		}
+
+		public void makeCopy(char[][] board) {
+			for (int i = 0; i < board.length; i++) {
+				for (int j = 0; j < board.length; j++) {
+					boardCopy[i][j] = board[i][j];
+
+				}
 			}
 
 		}
-		return move;
-	}
-
-	private String leftToRightDiag(char[][] board) {
-		String move = "";
-		// Checks for 2 in a row left to right diagonally and plays the move that makes
-		// 3 in a diagonal
-		for (int i = 0; i < 2; i++) {
-			if (board[i][i] == board[i + 1][i + 1]) {
-				if (board[2][2] == '.') {
-					move = getMoveAt(2, 2);
-					return move;
-				} else if (board[0][0] == '.') {
-					move = getMoveAt(0, 0);
-					return move;
-				}
-			} else if (board[0][0] == board[2][2]) {
-				if (board[1][1] == '.') {
-					move = getMoveAt(1, 1);
-					return move;
-				}
-			}
-		}
-		return move;
-	}
-
-	private String rightToLeftDiag(char[][] board) {
-		String move = "";
-		// Checks for 2 in a row right to left diagonally and plays the move that makes
-		// 3 diagonal
-		if (board[0][2] == board[1][1]) {
-			if (board[2][0] == '.') {
-				move = getMoveAt(2, 0);
-				return move;
-			}
-
-		} else if (board[2][0] == board[1][1]) {
-			if (board[0][2] == '.') {
-				move = getMoveAt(0, 2);
-				return move;
-			}
-		} else if (board[2][0] == board[0][2]) {
-			if (board[1][1] == '.') {
-				move = getMoveAt(1, 1);
-				return move;
-			}
-		}
-		return move;
 
 	}
 
