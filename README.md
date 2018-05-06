@@ -13,5 +13,3 @@ The board parameter is a 2D array. Each element contains either:
   If you return an invalid move, you will lose your turn.  
   You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.  
   
-  # Solution
-  
