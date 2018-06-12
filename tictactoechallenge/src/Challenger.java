@@ -15,26 +15,50 @@ import edu.brookdale.ttt.Player;
   You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.
  */
 
-public class Challenger extends Player {
+public class Challenger2 extends Player {
 
 	protected static char YOU;
-	static int HUMAN;
-	static int COMPUTER;
+	private static int HUMAN;
+	private static int COMPUTER;
+	
+	public static char getYOU() {
+		return YOU;
+	}
+
+	public static void setYOU(char yOU) {
+		YOU = yOU;
+	}
+
+	public static int getHUMAN() {
+		return HUMAN;
+	}
+
+	public static void setHUMAN(int hUMAN) {
+		HUMAN = hUMAN;
+	}
+
+	public static int getCOMPUTER() {
+		return COMPUTER;
+	}
+
+	public static void setCOMPUTER(int cOMPUTER) {
+		COMPUTER = cOMPUTER;
+	}
 
 	public String getMove(char[][] board, char you) { // DO NOT CHANGE THIS LINE
 		String move = "";
 		int[] winners = new int[10];
 		boardCopy boardCopy1 = new boardCopy();
 
-		YOU = you;
-		if (YOU == 'x') {
-			HUMAN = 1;
-			COMPUTER = 2;
+		setYOU(you);
+		if (getYOU() == 'x') {
+			setHUMAN(1);
+			setCOMPUTER(2);
 		} else {
-			HUMAN = 2;
-			COMPUTER = 1;
+			setHUMAN(2);
+			setCOMPUTER(1);
 		}
-
+		
 		// Creates a copy of the current game board
 		boardCopy1.makeCopy(board);
 
