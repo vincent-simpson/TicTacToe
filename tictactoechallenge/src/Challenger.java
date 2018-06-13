@@ -80,14 +80,14 @@ public class Challenger extends Player {
 	}
 	
 	/**
-	 * Sets the move to the first available corner of the board. This method is invoked when there are
-	 * no winning or blocking moves to make.
+	 * Sets the move to the first available corner of the board. This method is invoked 
+	 * when there are no winning or blocking moves to make.
 	 * @return The corners on the board.
 	 */
 	public static String playCorners() 
 	{
 		String move = "";
-		final int[] intCorners = { 0, 6, 2, 8 };
+		final int[] intCorners = { 0, 2, 6, 8 };
 		String[] currentCell = new String[4];
 		
 		for (int i = 0; i < 4; i++) 
@@ -103,7 +103,7 @@ public class Challenger extends Player {
 
 	/**
 	 * Checks the current layout of the gameboard for a winner.
-	 * @param board	The current game board.
+	 * @param board	The current gameboard.
 	 * @return The winning moves.
 	 */
 	public static int[] findWinner(char[][] board) 
@@ -123,6 +123,7 @@ public class Challenger extends Player {
 		 * method call {@see #findWinsNextTurn}
 		 *   
 		 */
+		//Tests columns for win.
 		for (int columns = 0; (humanWin == -1 || computerWin == -1) && columns < 3; columns++) 
 		{			
 			for (int rows = 0; rows < 3; rows++) 
@@ -143,7 +144,10 @@ public class Challenger extends Player {
 		// Test rows for win
 		for (int row = 0; (humanWin == -1 || computerWin == -1) && row < 3; row++) 
 		{
-			for (int columns = 0; columns < 3; columns++) {cells[columns] = columns * 3 + row;}
+			for (int columns = 0; columns < 3; columns++) 
+			{
+				cells[columns] = columns * 3 + row;
+			}
 
 			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
 			
@@ -209,7 +213,7 @@ public class Challenger extends Player {
 		 * findWinner returns as {@code {-1, -1}}. The if statements in the getMove method check for this,
 		 * and if both values are {@code {-1, -1}}, the program proceeds to the playCorners method.
 		 * 
-		 * Essentially we can say that if all three cells are empty on
+		 * Essentially we can say that if all three cells are empty, no winning moves are returned. 
 		 */
 		if(BoardCopy.getValue(cell1) == emptySpace && BoardCopy.getValue(cell2) == emptySpace &&
 				BoardCopy.getValue(cell3) == emptySpace) {return null;}
@@ -250,7 +254,7 @@ public class Challenger extends Player {
 	 * @param num1
 	 * @param num2
 	 * @return The string value corresponding to the coordinate position on the board given as two
-	 * parameters.
+	 * numbers.
 	 */
 	public static String getMoveAt(int num1, int num2) 
 	{	
@@ -279,20 +283,20 @@ public class Challenger extends Player {
 	}
 
 	/**
-	 * 
+	 * This class is used to create a copy of the current gameboard.
 	 * @author vince
-	 *
 	 */
 	static class BoardCopy extends Challenger 
 	{
 		static char[][] boardCopy = new char[3][3];
+		
+		public BoardCopy() {}
 
-		//Given a position on the board as a string, converts it to its corresponding numerical position
 		/**
-		 * 
+		 * Given a position on the board as a string {@param currentCell}, @return the current 
+		 * character in that position.
 		 * @param currentCell
 		 * @param i
-		 * @return
 		 */
 		public static char getCell(String[] currentCell, int i) 
 		{
@@ -342,10 +346,11 @@ public class Challenger extends Player {
 		}
 
 		/**
-		 * 
+		 * @deprecated
 		 * @param currentCell
 		 * @param currentCell2
-		 * @return
+		 * @return A string with the value of the board at position: 
+		 * @code {currentCell, currentCell2}
 		 */
 		public String getCell(int currentCell, int currentCell2) 
 		{
@@ -356,18 +361,18 @@ public class Challenger extends Player {
 		 * 
 		 * @param row
 		 * @param column
-		 * @return
+		 * @return The char value of the current gameboard with the position
+		 * board[row][column]
 		 */
 		public static char getValue(int row, int column) 
 		{
 			return boardCopy[row][column];
 		}
 
-		//Given a numerical position on the board (0-8 starting from the top left and going left to right), returns the character at that position.
 		/**
-		 * 
+		 * Given a numerical position on the board (0-8 starting from the top left and going left to right), 
+		 * @return the character at that position.
 		 * @param row
-		 * @return
 		 */
 		public static char getValue(int row) 
 		{
