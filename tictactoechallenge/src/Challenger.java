@@ -51,29 +51,32 @@ public class Challenger extends Player {
 			setCOMPUTER(1);
 		}
 		
-		// Makes the first move at the center square if available
+		/*
+		 *  Makes the first move at the center square if available
+		 */
 		if (BoardCopy.getValue(1, 1) == '.') 
 		{return move = "MM";}
 		
-		
-		int[] winners = findWinner(board);
-		
-		final int HUMANWIN = 0, COMPUTERWIN = 1;
+		else {
+			int[] winners = findWinner(board);
+			
+			final int HUMANWIN = 0, COMPUTERWIN = 1;
 
-		if (winners[COMPUTERWIN] != -1) 
-		{
-			move = intToCellBoardPosition(winners[COMPUTERWIN]);
+			if (winners[COMPUTERWIN] != -1) 
+			{
+				move = intToCellBoardPosition(winners[COMPUTERWIN]);
+				return move;
+			} 
+			else if (winners[HUMANWIN] != -1) 
+			{
+				move = intToCellBoardPosition(winners[HUMANWIN]);
+				return move;
+			}
+
+			move = playCorners();
+
 			return move;
-		} 
-		else if (winners[HUMANWIN] != -1) 
-		{
-			move = intToCellBoardPosition(winners[HUMANWIN]);
-			return move;
-		}
-
-		move = playCorners();
-
-		return move;
+		}	
 	}
 	
 	/**
@@ -100,8 +103,8 @@ public class Challenger extends Player {
 
 	/**
 	 * Checks the current layout of the gameboard for a winner.
-	 * @param board		the current game board
-	 * @return the winning moves
+	 * @param board	The current game board.
+	 * @return The winning moves.
 	 */
 	public static int[] findWinner(char[][] board) 
 	{
@@ -122,7 +125,10 @@ public class Challenger extends Player {
 		 */
 		for (int columns = 0; (humanWin == -1 || computerWin == -1) && columns < 3; columns++) 
 		{			
-			for (int rows = 0; rows < 3; rows++) {cells[rows] = columns * 3 + rows;}
+			for (int rows = 0; rows < 3; rows++) 
+			{
+				cells[rows] = columns * 3 + rows;
+			}
 
 			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
 			
