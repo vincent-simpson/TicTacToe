@@ -18,30 +18,34 @@ import edu.brookdale.ttt.Player;
 public class Challenger extends Player {
 
 	private static char YOU;
+	private static char COMPUTERCHAR;
 	private static int HUMAN;
 	private static int COMPUTER;
-	
+
 	public static char getYOU() {return YOU;}
-	public static void setYOU(char yOU) {YOU = yOU;}
+	public static void setYOU(char you) {YOU = you;}
 	public static int getHUMAN() {return HUMAN;}
-	public static void setHUMAN(int hUMAN) {HUMAN = hUMAN;}
+	public static void setHUMAN(int human) {HUMAN = human;}
 	public static int getCOMPUTER() {return COMPUTER;}
-	public static void setCOMPUTER(int cOMPUTER) {COMPUTER = cOMPUTER;}
-	
+	public static void setCOMPUTER(int computer) {COMPUTER = computer;}
+	public static char getCOMPUTERCHAR() {return COMPUTERCHAR;}
+	public static void setCOMPUTERCHAR(char comp) {COMPUTERCHAR = comp;}
+
 	public String getMove(char[][] board, char you) 
 	{
 		String move = "";
-		
+
 		// Creates a copy of the current game board
 		BoardCopy.makeCopy(board);
 
-		/** Sets the global variable YOU to the char passed by {@param you}
-		* Checks to see if YOU is equal to the char 'x'. If true, this means that it's the human's (my)
-		* turn first. 
-		* */
+		/* Sets the global variable YOU to the char passed by the parameter: you
+		 * Checks to see if YOU is equal to the char 'x'. If true, this means that it's the human's (my)
+		 * turn first. 
+		 */
 		setYOU(you);
 		if (getYOU() == 'x') 
 		{
+			setCOMPUTERCHAR('o');
 			setHUMAN(1);
 			setCOMPUTER(2);
 		} 
@@ -50,35 +54,67 @@ public class Challenger extends Player {
 			setHUMAN(2);
 			setCOMPUTER(1);
 		}
-		
-		/*
-		 *  Makes the first move at the center square if available
-		 */
-		if (BoardCopy.getValue(1, 1) == '.') 
-		{return move = "MM";}
-		
-		else {
-			int[] winners = findWinner(board);
-			
-			final int HUMANWIN = 0, COMPUTERWIN = 1;
 
-			if (winners[COMPUTERWIN] != -1) 
+
+		//If its my turn first
+		if(getHUMAN() == 1) {
+			//Play the top left square.
+			if(BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(0))) 
 			{
-				move = intToCellBoardPosition(winners[COMPUTERWIN]);
-				return move;
-			} 
-			else if (winners[HUMANWIN] != -1) 
+				return "TL";
+			//If that position is taken, as it would be on my second turn, play the bottom right square.	
+			}else if(BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(8)))
 			{
-				move = intToCellBoardPosition(winners[HUMANWIN]);
+				return "BR";
+			}
+			//If both spots are taken, look for the winning/blocking move and make it.
+			else 
+			{				
+				int winner = findWinner(board);
+
+				if (winner != -1) 
+				{
+					move = getMoveAtSinglePosition(winner);
+					return move;
+				} 
+				else if (winner != -1) 
+				{
+					move = getMoveAtSinglePosition(winner);
+					return move;
+				}
+				//If there are no winning/blocking moves, play the corners.
+				move = playCorners();
+
 				return move;
 			}
+		}
+		//If its the computer's turn first.
+		else 
+		{
+			//If the center square is available, make move there for best chance at tieing 
+			if (BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(4))) {
+				return "MM";
+			}
+			//Find the winning move and play it.
+			int winner = findWinner(board);
 
+			if (winner != -1) 
+			{
+				move = getMoveAtSinglePosition(winner);
+				return move;
+			} 
+			else if (winner != -1) 
+			{
+				move = getMoveAtSinglePosition(winner);
+				return move;
+			}
+			//If there are no winning/blocking moves, play the corners.
 			move = playCorners();
 
 			return move;
-		}	
+		}
 	}
-	
+
 	/**
 	 * Sets the move to the first available corner of the board. This method is invoked 
 	 * when there are no winning or blocking moves to make.
@@ -87,15 +123,13 @@ public class Challenger extends Player {
 	public static String playCorners() 
 	{
 		String move = "";
-		final int[] intCorners = { 0, 2, 6, 8 };
-		String[] currentCell = new String[4];
-		
+		String[] stringCorners = {"TL", "TR", "BL", "BR"};
+
 		for (int i = 0; i < 4; i++) 
 		{
-			currentCell[i] = intToCellBoardPosition(intCorners[i]);
-			if (BoardCopy.getCell(currentCell, i) == '.') 
+			if (BoardCopy.isEmptySpace(BoardCopy.getCell(stringCorners, i))) 
 			{
-				move = currentCell[i];
+				move = stringCorners[i];
 				return move;
 			}
 		}return move;
@@ -106,13 +140,10 @@ public class Challenger extends Player {
 	 * @param board	The current gameboard.
 	 * @return The winning moves.
 	 */
-	public static int[] findWinner(char[][] board) 
+	public static int findWinner(char[][] board) 
 	{
-		int[] winners;
+		int winner;
 		int[] cells = new int[3];
-		int[] winningMoves = new int[2];
-		int humanWin = -1, computerWin = -1;
-
 		/**
 		 * Initializes the integer array "cells" with the values as such on the first
 		 * iteration:
@@ -120,166 +151,159 @@ public class Challenger extends Player {
 		 * cells[1] = 1; 
 		 * cells[2] = 2;
 		 * Next, the integer array "winners" is assigned to the array returned from the
-		 * method call {@see #findWinsNextTurn}
+		 * method call @see findWinsNextTurn
 		 *   
 		 */
-		//Tests columns for win.
-		for (int columns = 0; (humanWin == -1 || computerWin == -1) && columns < 3; columns++) 
+		//Tests rows for win.
+		for (int columns = 0;columns < 3; columns++) 
 		{			
 			for (int rows = 0; rows < 3; rows++) 
 			{
 				cells[rows] = columns * 3 + rows;
 			}
 
-			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
-			
-			if (winners != null) 
+			winner = findWinningCell(cells[0], cells[1], cells[2]);
+			if (winner != -1) 
 			{
-				if (winners[0] == getHUMAN()) {humanWin = winners[1];} 
-				else if (winners[0] == getCOMPUTER()) {computerWin = winners[1];}
-			} 		
-			if(winningMoves[0] == humanWin && winningMoves[1] == computerWin) {return winningMoves;}				
+				return winner;
+			}				
 		}
 
-		// Test rows for win
-		for (int row = 0; (humanWin == -1 || computerWin == -1) && row < 3; row++) 
+		//Tests columns for win
+		for (int row = 0;row < 3; row++) 
 		{
 			for (int columns = 0; columns < 3; columns++) 
 			{
 				cells[columns] = columns * 3 + row;
 			}
 
-			winners = findWinsNextTurn(board, cells[0], cells[1], cells[2]);
-			
-			if (winners != null) 
+			winner = findWinningCell(cells[0], cells[1], cells[2]);
+			if (winner != -1) 
 			{
-				if (winners[0] == getHUMAN()) {humanWin = winners[1];} 
-				else if (winners[0] == getCOMPUTER()) {computerWin = winners[1];}
+				return winner;
 			}
-			if(winningMoves[0] == humanWin && winningMoves[1] == computerWin) {return winningMoves;}
 		}
 
-		// Checks diagonals
-		if (humanWin == -1 || computerWin == -1) 
+		//Tests diagonals for win
+		winner = findWinningCell(0, 4, 8);
+		if (winner != -1) 
 		{
-			winners = findWinsNextTurn(board, 0, 4, 8);
-
-			if (winners != null) 
-			{
-				if (winners[0] == getHUMAN()) {humanWin = winners[1];} 
-				else if (winners[0] == getCOMPUTER()) {computerWin = winners[1];}
-			}
-			if(winningMoves[0] == humanWin && winningMoves[1] == computerWin) {return winningMoves;}
+			return winner;
 		}
-		if (humanWin == -1 || computerWin == -1) 
-		{			
-			winners = findWinsNextTurn(board, 2, 4, 6);
 
-			if (winners != null) 
-			{
-				if (winners[0] == getHUMAN()) {humanWin = winners[1];} 
-				else if (winners[0] == getCOMPUTER()) {computerWin = winners[1];}
-			}
+
+		winner = findWinningCell(2, 4, 6);
+		if (winner != -1) 
+		{
+			return winner;
 		}
-		winningMoves[0] = humanWin;
-		winningMoves[1] = computerWin;
-		return winningMoves;
+		
+		//winningMove is -1 when there are no winning moves found.
+		winner = -1;
+		return winner;
 
 	}
 
 	/**
-	 * This method, given the current layout of the board and the 3 positions to check
-	 * on the board, will return
-	 * ***NEED TO FIX***:
-	 * returned array tells at position 0: who wins, computer or human and
-	 * at position 1: which cell is the winner  
+	 * 
 	 * @param board
 	 * @param cell1
 	 * @param cell2
 	 * @param cell3
-	 * @return the position on the board that results in a win.
+	 * @return This method, given the current layout of the board and the 3 positions to check
+	 * on the board, will return the position on the board that results in a win.
 	 */
-	public static int[] findWinsNextTurn(char[][] board, int cell1, int cell2, int cell3) 
+	public static int findWinningCell(int cell1, int cell2, int cell3) 
 	{
-		final int CELL = 1;
-		final int PLAYER = 0;
-		int[] winner = new int[2];
-		char emptySpace = '.';
-		
-		/**
-		 * If all 3 cells are empty, {@return null}
+		int winningCell = 0;
+		/*
+		 * If all 3 cells are empty, return null
 		 * After this method returns null, the code after this method is called checks for whether or not
-		 * the call {@return null}. If it does {@return null}, the array winningMoves in the method
-		 * findWinner returns as {@code {-1, -1}}. The if statements in the getMove method check for this,
-		 * and if both values are {@code {-1, -1}}, the program proceeds to the playCorners method.
+		 * the call returns null. If it does return null, the array winningMoves in the method
+		 * findWinner returns as {-1, -1}. The if statements in the getMove method check for this,
+		 * and if both values are -1, the program proceeds to the playCorners method.
 		 * 
 		 * Essentially we can say that if all three cells are empty, no winning moves are returned. 
 		 */
-		if(BoardCopy.getValue(cell1) == emptySpace && BoardCopy.getValue(cell2) == emptySpace &&
-				BoardCopy.getValue(cell3) == emptySpace) {return null;}
-		
-		else if (BoardCopy.getValue(cell1) == BoardCopy.getValue(cell2) && BoardCopy.getValue(cell3) == '.') 
+
+		if(isEmptySpace(cell1, cell2, cell3)) {
+			return -1;
+		}
+
+		else if (BoardCopy.getPositionalValue(cell1) == BoardCopy.getPositionalValue(cell2) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell3))) 
 		{
-			winner[PLAYER] = 1;
-			winner[CELL] = cell3;
-			return winner;
+			winningCell = cell3;
 		} 
-		else if (BoardCopy.getValue(cell2) == BoardCopy.getValue(cell3) && BoardCopy.getValue(cell1) == '.') 
+		else if (BoardCopy.getPositionalValue(cell2) == BoardCopy.getPositionalValue(cell3) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell1))) 
 		{
-			winner[PLAYER] = 1;
-			winner[CELL] = cell1;
-			return winner;
+			winningCell = cell1;
 		}
-		else if(BoardCopy.getValue(cell1) == BoardCopy.getValue(cell3) && BoardCopy.getValue(cell2) == '.') 
+		else if(BoardCopy.getPositionalValue(cell1) == BoardCopy.getPositionalValue(cell3) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell2))) 
 		{
-			winner[PLAYER] = 1;
-			winner[CELL] = cell2;
-			return winner;
+			winningCell = cell2;
+		} else {
+			return -1;
 		}
-		return winner = null;
+
+		return winningCell;	
+	}
+
+	/**
+	 * 
+	 * @param cell1
+	 * @param cell2
+	 * @param cell3
+	 * @return True if all three cells are empty, else return false.
+	 */
+	public static boolean isEmptySpace(int cell1, int cell2, int cell3) {
+		if( BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell1)) && 
+			BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell2)) &&
+			BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell3))) 
+				{return true;}
+		else {return false;}
 	}
 	
 	/**
-	 * @param cellNum
-	 * @return The string value corresponding to the given numerical position on the board.
-	 */
-	public static String intToCellBoardPosition(int cellNum) 
-	{
-		int cell[] = { cellNum / 3, cellNum % 3 };
-		return getStringMoveAtArray(cell);
-	}
-
-	/**
 	 * 
-	 * @param num1
-	 * @param num2
-	 * @return The string value corresponding to the coordinate position on the board given as two
-	 * numbers.
+	 * @param position
+	 * @return The position on the board as a string given the numerical position.
 	 */
-	public static String getMoveAt(int num1, int num2) 
-	{	
-		String[][] moveArray = { 
-				{ "TL", "TM", "TR" }, 
-				{ "ML", "MM", "MR" }, 
-				{ "BL", "BM", "BR" } };
-		return moveArray[num1][num2];
-	}
+	public static String getMoveAtSinglePosition(int position) {
+		String returnString = "";
 
-	/**
-	 * 
-	 * @param array
-	 * @return The string value corresponding to the coordinate position on the board given as the first
-	 * two values in the {@param array};
-	 */
-	public static String getStringMoveAtArray(int[] array) 
-	{	
-		int num1 = array[0];
-		int num2 = array[1];
-		String[][] moveArray = { 
-				{ "TL", "TM", "TR" }, 
-				{ "ML", "MM", "MR" }, 
-				{ "BL", "BM", "BR" } };
-		return moveArray[num1][num2];
+		switch(position) {
+		case 0:
+			returnString = "TL";
+			break;
+		case 1:
+			returnString = "TM";
+			break;
+		case 2:
+			returnString = "TR";
+			break;
+		case 3:
+			returnString = "ML";
+			break;
+		case 4:
+			returnString = "MM";
+			break;
+		case 5:
+			returnString = "MR";
+			break;
+		case 6:
+			returnString = "BL";
+			break;
+		case 7:
+			returnString = "BM";
+			break;
+		case 8:
+			returnString = "BR";
+			break;
+		}
+		return returnString;
 	}
 
 	/**
@@ -289,12 +313,12 @@ public class Challenger extends Player {
 	static class BoardCopy extends Challenger 
 	{
 		static char[][] boardCopy = new char[3][3];
-		
+
 		public BoardCopy() {}
 
 		/**
-		 * Given a position on the board as a string {@param currentCell}, @return the current 
-		 * character in that position.
+		 * Given a position on the board as a string @param currentCell, @return the current 
+		 * character in position @param i.
 		 * @param currentCell
 		 * @param i
 		 */
@@ -345,40 +369,24 @@ public class Challenger extends Player {
 			return boardCopy[num1][num2];
 		}
 
-		/**
-		 * @deprecated
-		 * @param currentCell
-		 * @param currentCell2
-		 * @return A string with the value of the board at position: 
-		 * @code {currentCell, currentCell2}
-		 */
-		public String getCell(int currentCell, int currentCell2) 
-		{
-			return Character.toString(boardCopy[currentCell][currentCell2]);
-		}
-
-		/**
-		 * 
-		 * @param row
-		 * @param column
-		 * @return The char value of the current gameboard with the position
-		 * board[row][column]
-		 */
-		public static char getValue(int row, int column) 
-		{
-			return boardCopy[row][column];
+		public static boolean isEmptySpace(char ch) {
+			if(ch == '.') {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		/**
 		 * Given a numerical position on the board (0-8 starting from the top left and going left to right), 
-		 * @return the character at that position.
-		 * @param row
+		 * @return the character at that numerical position.
+		 * @param numericalPosition
 		 */
-		public static char getValue(int row) 
+		public static char getPositionalValue(int numericalPosition) 
 		{
 			char c = 0;
 
-			switch (row) 
+			switch (numericalPosition) 
 			{
 			case 0:
 				c = boardCopy[0][0];
@@ -408,12 +416,11 @@ public class Challenger extends Player {
 				c = boardCopy[2][2];
 				break;
 			}
-
 			return c;
 		}
-		
+
 		/**
-		 * 
+		 * Takes the current gameboard and moves its contents into {@link BoardCopy#boardCopy}
 		 * @param board
 		 */
 		public static void makeCopy(char[][] board) 
@@ -426,7 +433,5 @@ public class Challenger extends Player {
 				}
 			}
 		}
-
 	}
-
 }
