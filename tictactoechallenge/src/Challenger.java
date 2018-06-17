@@ -17,13 +17,13 @@ import edu.brookdale.ttt.Player;
 
 public class Challenger extends Player {
 
-	private static char YOU;
+	private static char HUMANCHAR;
 	private static char COMPUTERCHAR;
 	private static int HUMAN;
 	private static int COMPUTER;
 
-	public static char getYOU() {return YOU;}
-	public static void setYOU(char you) {YOU = you;}
+	public static char getHUMANCHAR() {return HUMANCHAR;}
+	public static void setHUMANCHAR(char newChar) {HUMANCHAR = newChar;}
 	public static int getHUMAN() {return HUMAN;}
 	public static void setHUMAN(int human) {HUMAN = human;}
 	public static int getCOMPUTER() {return COMPUTER;}
@@ -42,8 +42,8 @@ public class Challenger extends Player {
 		 * Checks to see if YOU is equal to the char 'x'. If true, this means that it's the human's (my)
 		 * turn first. 
 		 */
-		setYOU(you);
-		if (getYOU() == 'x') 
+		setHUMANCHAR(you);
+		if (getHUMANCHAR() == 'x') 
 		{
 			setCOMPUTERCHAR('o');
 			setHUMAN(1);
