@@ -51,6 +51,7 @@ public class Challenger extends Player {
 		} 
 		else 
 		{
+			setCOMPUTERCHAR('x');
 			setHUMAN(2);
 			setCOMPUTER(1);
 		}
