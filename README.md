@@ -27,13 +27,13 @@ With Eclipse open:
 4. Highlight the folder (typically labeled "TicTacToe-master") and click `Select Folder`
 5. Eclipse will automatically find the project nested within that folder and you can click `Finish` to finalize the import.
 
+With the project now imported into Eclipse, simply right click the project, go to `Run As` and then `Application`
 
 
 
 
 
-
-# TicTacToe Challenger 
+# TicTacToe Challenger
 
 ## Problem Statement 
 
@@ -49,4 +49,5 @@ The board parameter is a 2D array. Each element contains either:
     "BL"  "BM"  "BR"  
   If you return an invalid move, you will lose your turn.  
   You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.  
+  
   
