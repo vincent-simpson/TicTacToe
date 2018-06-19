@@ -33,7 +33,7 @@ With the project now imported into Eclipse, simply right click the project, go t
 
 
 
-# TicTacToe Challenger**TO DO**
+# TicTacToe Challenger***TO DO***
 
 ## Problem Statement 
 
