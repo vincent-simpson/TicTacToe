@@ -60,11 +60,11 @@ public class Challenger extends Player {
 		//If its my turn first
 		if(getHUMAN() == 1) {
 			//Play the top left square.
-			if(BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(0))) 
+			if(BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(0))) 
 			{
 				return "TL";
 			//If that position is taken, as it would be on my second turn, play the bottom right square.	
-			}else if(BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(8)))
+			}else if(BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(8)))
 			{
 				return "BR";
 			}
@@ -75,14 +75,9 @@ public class Challenger extends Player {
 
 				if (winner != -1) 
 				{
-					move = getMoveAtSinglePosition(winner);
+					move = getMoveStringToReturn(winner);
 					return move;
 				} 
-				else if (winner != -1) 
-				{
-					move = getMoveAtSinglePosition(winner);
-					return move;
-				}
 				//If there are no winning/blocking moves, play the corners.
 				move = playCorners();
 
@@ -92,8 +87,8 @@ public class Challenger extends Player {
 		//If its the computer's turn first.
 		else 
 		{
-			//If the center square is available, make move there for best chance at tieing 
-			if (BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(4))) {
+			//If the center square is available, make move there for best chance at tying 
+			if (BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(4))) {
 				return "MM";
 			}
 			//Find the winning move and play it.
@@ -101,14 +96,9 @@ public class Challenger extends Player {
 
 			if (winner != -1) 
 			{
-				move = getMoveAtSinglePosition(winner);
+				move = getMoveStringToReturn(winner);
 				return move;
 			} 
-			else if (winner != -1) 
-			{
-				move = getMoveAtSinglePosition(winner);
-				return move;
-			}
 			//If there are no winning/blocking moves, play the corners.
 			move = playCorners();
 
@@ -145,16 +135,7 @@ public class Challenger extends Player {
 	{
 		int winner;
 		int[] cells = new int[3];
-		/**
-		 * Initializes the integer array "cells" with the values as such on the first
-		 * iteration:
-		 * cells[0] = 0; 
-		 * cells[1] = 1; 
-		 * cells[2] = 2;
-		 * Next, the integer array "winners" is assigned to the array returned from the
-		 * method call @see findWinsNextTurn
-		 *   
-		 */
+
 		//Tests rows for win.
 		for (int columns = 0;columns < 3; columns++) 
 		{			
@@ -218,31 +199,27 @@ public class Challenger extends Player {
 	{
 		int winningCell = 0;
 		/*
-		 * If all 3 cells are empty, return null
-		 * After this method returns null, the code after this method is called checks for whether or not
-		 * the call returns null. If it does return null, the array winningMoves in the method
-		 * findWinner returns as {-1, -1}. The if statements in the getMove method check for this,
-		 * and if both values are -1, the program proceeds to the playCorners method.
-		 * 
-		 * Essentially we can say that if all three cells are empty, no winning moves are returned. 
+		 * If all 3 cells are empty, return -1
+		 * After this method returns -1, the code after this method is called checks for whether or not
+		 * the call returns -1. If it does return -1, the program proceeds to the playCorners method.		 * 
 		 */
 
 		if(isEmptySpace(cell1, cell2, cell3)) {
 			return -1;
 		}
 
-		else if (BoardCopy.getPositionalValue(cell1) == BoardCopy.getPositionalValue(cell2) 
-				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell3))) 
+		else if (BoardCopy.getValueAtNumericalPosition(cell1) == BoardCopy.getValueAtNumericalPosition(cell2) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell3))) 
 		{
 			winningCell = cell3;
 		} 
-		else if (BoardCopy.getPositionalValue(cell2) == BoardCopy.getPositionalValue(cell3) 
-				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell1))) 
+		else if (BoardCopy.getValueAtNumericalPosition(cell2) == BoardCopy.getValueAtNumericalPosition(cell3) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell1))) 
 		{
 			winningCell = cell1;
 		}
-		else if(BoardCopy.getPositionalValue(cell1) == BoardCopy.getPositionalValue(cell3) 
-				&& BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell2))) 
+		else if(BoardCopy.getValueAtNumericalPosition(cell1) == BoardCopy.getValueAtNumericalPosition(cell3) 
+				&& BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell2))) 
 		{
 			winningCell = cell2;
 		} else {
@@ -260,9 +237,9 @@ public class Challenger extends Player {
 	 * @return True if all three cells are empty, else return false.
 	 */
 	public static boolean isEmptySpace(int cell1, int cell2, int cell3) {
-		if( BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell1)) && 
-			BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell2)) &&
-			BoardCopy.isEmptySpace(BoardCopy.getPositionalValue(cell3))) 
+		if( BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell1)) && 
+			BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell2)) &&
+			BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(cell3))) 
 				{return true;}
 		else {return false;}
 	}
@@ -272,7 +249,7 @@ public class Challenger extends Player {
 	 * @param position
 	 * @return The position on the board as a string given the numerical position.
 	 */
-	public static String getMoveAtSinglePosition(int position) {
+	public static String getMoveStringToReturn(int position) {
 		String returnString = "";
 
 		switch(position) {
@@ -370,6 +347,11 @@ public class Challenger extends Player {
 			return boardCopy[num1][num2];
 		}
 
+		/**
+		 * 
+		 * @param ch
+		 * @return True if the @param ch is '.', indicating an empty space
+		 */
 		public static boolean isEmptySpace(char ch) {
 			if(ch == '.') {
 				return true;
@@ -383,7 +365,7 @@ public class Challenger extends Player {
 		 * @return the character at that numerical position.
 		 * @param numericalPosition
 		 */
-		public static char getPositionalValue(int numericalPosition) 
+		public static char getValueAtNumericalPosition(int numericalPosition) 
 		{
 			char c = 0;
 
@@ -421,7 +403,7 @@ public class Challenger extends Player {
 		}
 
 		/**
-		 * Takes the current gameboard and moves its contents into {@link BoardCopy#boardCopy}
+		 * Takes the current gameboard and makes a copy of it.
 		 * @param board
 		 */
 		public static void makeCopy(char[][] board) 
