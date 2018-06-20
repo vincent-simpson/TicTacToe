@@ -96,10 +96,14 @@ The board parameter is a 2D array. Each element contains either:
   If its my turn first, the strategy is as follows:  
   1. Play the middle square.
   2. Play a corner
-  3. Since this is my third turn, there are now enough markers on the board to start looking for a winning/blocking move
-  4. Play the winning/blocking move  
+  3. Since this is my third turn, there are now enough markers on the board to start looking and playing for a winning/blocking move
   
   The reason for playing in the middle square first is that a "mistake" made by the opponent is much easier to capitalize on than a mistake made after playing in a corner position first.  
+  
+  If its not my turn first, the strategy is:
+  1. Play the center square if available for the best chance at a tie
+  2. If the center square isn't available, play a corner.
+  3. On my third turn, I'll now be looking for and playing blocking/winning moves until the round is over
  
 ## Results
 Here are the results after playing through all 5000 games:  
