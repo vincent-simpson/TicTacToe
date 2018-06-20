@@ -105,4 +105,5 @@ The board parameter is a 2D array. Each element contains either:
 Here are the results after playing through all 5000 games:  
 ![alt text](https://i.imgur.com/Orv4DIC.png)  
 
-As we can see, there are large discrepancies between the first two difficulties, and the last three. This is due to the strategies programmed within those difficulties. The first two difficulties play seemingly random and without much attempt to block any of my moves. This produces the high number of winning points. Also note, the percentages are calculated based on `(numberOfPoints / 2000) * 100` 2000 being the maximum number of points (1000 games * 2 points per win)
+As we can see, there are large discrepancies between the first two difficulties, and the last three. This is due to the strategies programmed within those difficulties. The first two difficulties play seemingly random and without much attempt to block any of my moves. This produces the high number of winning points. Also note, the percentages are calculated based on `(numberOfPoints / 2000) * 100`  
+2000 being the maximum number of points (1000 games * 2 points per win)
