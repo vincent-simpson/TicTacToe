@@ -59,16 +59,12 @@ public class Challenger extends Player {
 
 		//If its my turn first
 		if(getHUMAN() == 1) {
-			//Play the top left square.
-			if(BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(0))) 
+			//Play the middle square.
+			if(BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(4))) 
 			{
-				return "TL";
-			//If that position is taken, as it would be on my second turn, play the bottom right square.	
-			}else if(BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(8)))
-			{
-				return "BR";
+				return "MM";
 			}
-			//If both spots are taken, look for the winning/blocking move and make it.
+			//On my next turn, the middle square would be taken and there wouldn't be any winners yet, so playCorners() would be invoked.
 			else 
 			{				
 				int winner = findWinner(board);
@@ -87,7 +83,7 @@ public class Challenger extends Player {
 		//If its the computer's turn first.
 		else 
 		{
-			//If the center square is available, make move there for best chance at tying 
+			//If the center square is available, make move there for best chance to tie
 			if (BoardCopy.isEmptySpace(BoardCopy.getValueAtNumericalPosition(4))) {
 				return "MM";
 			}
