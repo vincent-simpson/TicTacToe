@@ -66,9 +66,18 @@ java -classpath "c:\wherever\you\downloaded\TicTacToe\tictactoechallenge\lib\ttt
 
 # TicTacToe Challenger***TO DO***
 
+With the program UI open, you can see that there are a few different buttons that are responsible for controlling the program.  
+
+At the bottom left, a slider named "speed" is used to adjust the speed at which the program will play through each round of Tic Tac Toe. To the right of that, a checkbox named "Enabled" when checked will visually show you each move that's being made by the preprogrammed computer and the Challenger (me). When unchecked, the program will run straight through without any visuals and produce the %win result for each difficulty played against.  
+
+To the right of that, a Start and Exit button as well as a progress bar for how far along the program is (5000 games total).  
+
+When pressing Start, you can see that the program displays at the top left which marker belong to the Player (me) and the Computer for each round. 
+
 ## Problem Statement 
 
-Improve the getMove() function below(contained within the Challenger.java file). Return your next move.  
+```
+Improve the getMove() function (contained within the Challenger.java file). Return your next move.  
 The board parameter is a 2D array. Each element contains either:  
       '.' (open square)  
       'x'  
@@ -79,6 +88,21 @@ The board parameter is a 2D array. Each element contains either:
     "ML"  "MM"  "MR"   
     "BL"  "BM"  "BR"  
   If you return an invalid move, you will lose your turn.  
-  You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.  
+  You will earn 2 points for a win, 1 point for a tie, and 0 points for a loss.
+  ```
+  ## Methodology of Obtaining Maximum Points
+  The first thing my code looks at is whose turn it is first. In this program, every time the parameter of the getMove() function is 'x', its my turn first. This is important in strategizing which position to make the first move.  
   
+  If its my turn first, the strategy is as follows:  
+  1. Play the middle square.
+  2. Play a corner
+  3. Since this is my third turn, there are now enough markers on the board to start looking for a winning/blocking move
+  4. Play the winning/blocking move  
   
+  The reason for playing in the middle square first is that a "mistake" made by the opponent is much easier to capitalize on than a mistake made after playing in a corner position first.  
+ 
+## Results
+Here are the results after playing through all 5000 games:  
+![alt text](https://i.imgur.com/Orv4DIC.png)  
+
+As we can see, there are large discrepancies between the first two difficulties, and the last three. This is due to the strategies programmed within those difficulties. The first two difficulties play seemingly random and without much attempt to block any of my moves. This produces the high number of winning points. Also note, the percentages are calculated based on `(numberOfPoints / 2000) * 100` 2000 being the maximum number of points (1000 games * 2 points per win)
