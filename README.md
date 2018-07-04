@@ -64,7 +64,7 @@ java -classpath "c:\wherever\you\downloaded\TicTacToe\tictactoechallenge\lib\ttt
 
 
 
-# TicTacToe Challenger***TO DO***
+# TicTacToe Challenger
 
 With the program UI open, you can see that there are a few different buttons that are responsible for controlling the program.  
 
